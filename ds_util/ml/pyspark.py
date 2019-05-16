@@ -27,7 +27,7 @@ def _convert_numpy_type(d):
 
 def _deploy_python_model_partition(df_part, model, id_cols, input_cols, pred_names, predict_method, predict_params):
     """
-    Helper for deploy_model actually applies the `predict_method` to an individual partition of data.
+    Helper for deploy_python_model that applies the `predict_method` to an individual partition of data.
 
     Parameters
     ----------
@@ -152,8 +152,10 @@ def deploy_python_model(
     if predict_params is None:
         predict_params = {}
 
-    preds = df.rdd.mapPartitions(lambda part: _deploy_python_model_partition(
+    preds = df.rdd.mapPartitions(
+        lambda part: _deploy_python_model_partition(
             part, model, id_cols, input_cols, pred_names, predict_method, predict_params
-        ))
+        )
+    )
 
     return preds.toDF()
